@@ -1,1 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Zalo Icons</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+  <style>
+    .ximg {
+        display: block;
+        float: left;
+        width: 130px;
+        height: 130px;
+        background-position: 0px 0px;
+        background-repeat: repeat-x;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container-fluid p-5">
+    <div id="icons"></div>
+</div>
+
+<script>
+    var imgs = [];
+    $.ajax({
+        url: './data.json',
+        type: 'get',
+        success: function(data) {
+            $("#icons").html(
+                data.map((item, idx) => {
+                        let imgId = `img_${idx}`
+                        let bgSize = `background-size: ${item.width}px ${item.height}px;`
+                        let bgImg = `background-image: url(${item.name});`
+                        item.id = imgId
+                        item.cur = 0
+                        imgs.push(item)
+                        return `<div class='ximg m-3' xw='${item.width}' xh='${item.height}' style='${bgSize + bgImg}' cur='0' fps='${item.fps}' id='${imgId}' ></div>`
+                    })
+                    .join(''))
+            setInterval(function() {
+                imgs.forEach(item => {
+                    let pos = item.cur * 130
+                    $(`#${item.id}`).css('background-position', `${pos > 0 ? '-' + pos : pos}px 0px`)
+                    if (item.cur >= item.fps - 1) {
+                        item.cur = 0
+                    } else {
+                        item.cur = item.cur + 1
+                    }
+                })
+            }, 150)
+        }
+    });
+</script>
+
+</body>
+</html>
 
